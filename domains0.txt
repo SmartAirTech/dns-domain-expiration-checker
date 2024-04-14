@@ -23,6 +23,9 @@
 # имя_домена sleep:число число 
 # имя_домена sleep:число
 #
+# ! Regexp Группа 3
+# @regexp:регулярное_выражение cost:0 sleep:4 skip_checking_whois_text_changes
+#
 # Если значение истечения срока в днях не задано,
 # используется значение по-умолчанию или из параметра командной строки
 #
@@ -57,6 +60,9 @@
 # domain_name integer sleep:integer cost:float skip_checking_whois_text_changes
 # domain_name sleep:integer integer
 # domain_name sleep:integer
+#
+# ! Regexp Group 3
+# @regexp:regular_expression cost:0 sleep:4 skip_checking_whois_text_changes
 #
 # If the expiration value in days is not specified,
 # the default value is used or from the command line parameter

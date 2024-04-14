@@ -1,2 +1,5 @@
-python-whois
 colorama
+exrex
+python-dateutil
+python-whois
+requests[socks]

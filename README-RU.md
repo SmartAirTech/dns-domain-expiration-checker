@@ -85,6 +85,7 @@ $ python -m pip install --upgrade pip
 $ pip install -U python-whois
 $ pip install -U python-dateutil
 $ pip install -U colorama
+$ pip install -U exrex
 ```
 и
 ```console
@@ -177,9 +178,17 @@ Options:
     domain [sleep:%seconds%]
     domain [cost:%cost%]
     domain
+    @regexp:regular_expression [%days%] [sleep:%seconds%] [cost:%cost%] [skip_checking_whois_text_changes]
+    @regexp:regular_expression [sleep:%seconds%] [cost:%cost%]
+    @regexp:regular_expression [%days%]
+    @regexp:regular_expression
 ```
 
 **domain** - Имя домена
+
+**@regexp:** - ключевое слово начала описания списка доменов при помощи регулярного выражения (не изменяйте его!)
+
+**regular_expression** - регулярное выражение, описывающее правила формирования списка доменов (повторяющиеся доменные имена будут исключены)
 
 **%days%** - Целое число, обозначающее за какое количество дней до истечения срока регистрации домена поднимать тревогу.
 
@@ -217,6 +226,9 @@ Options:
 # имя_домена число sleep:число cost:float skip_checking_whois_text_changes
 # имя_домена sleep:число число 
 # имя_домена sleep:число
+#
+# ! Regexp Группа 3
+# @regexp:регулярное_выражение cost:0 sleep:4 skip_checking_whois_text_changes
 #
 # Если значение истечения срока в днях не задано,
 # используется значение по-умолчанию или из параметра командной строки
@@ -256,6 +268,11 @@ twitter.com
 ! Youtube
 youtube.tv  
 youtube.com
+
+! Regexp Группа (имена доменов генерируются при помощи регулярных выражений, дубликаты автоматически игнорируются)
+@regexp:youtube\.(com|org|net) cost:0 sleep:4 skip_checking_whois_text_changes
+@regexp:youtube[0-9]\.com cost:0 skip_checking_whois_text_changes sleep:4
+@regexp:youtube([0-9]|1[0-5])\.com cost:0 skip_checking_whois_text_changes sleep:4
 ```
 
 **-d STRING, --domain STRING**
@@ -658,6 +675,7 @@ $ crontab -u user -r
 - [Carl Mercier](https://github.com/cmer)
 - [Leif](https://github.com/akhepcat)
 - [woodholly](https://github.com/woodholly)
+- [Raphaël Droz](https://github.com/drzraf)
 
 
 ## Лицензия
@@ -671,7 +689,7 @@ $ crontab -u user -r
 Вы можете вносить любые правки в код скрипта и делать форк этого скрипта при условии указания ссылки на меня и на [Matty](https://github.com/Matty9191), как источника вашего вдохновения.
 
 ## Постскриптум
-- Работа скрипта проверялась в Microsoft Windows 10/11, Linux Fedora 36/37, Linux Debian 9/10/11/12, Linux Ubuntu Desktop 18.04/20.04/20.10/22.04.2/23.04, CentOS Linux 7.9/8.5, Rocky Linux 8.8/9.2, Linux Manjaro 22.1.3, Apple macOS 13.4.1 Ventura на MacBook Pro M1.
+- Работа скрипта проверялась в Microsoft Windows 10/11, Linux Fedora 36/38/39, Linux Debian 9/10/11/12, Linux Ubuntu Desktop 18.04/20.04/20.10/22.04.3/23.04, CentOS Linux 7.9/8.5, CentOS Stream 8/9, Rocky Linux 8.9/9.3, Linux Manjaro 23.1.4, Apple macOS 13.4.1 Ventura на MacBook Pro M1.
 
 
 ![Windows](https://img.shields.io/badge/Windows-0078D6?style=for-the-badge&logo=windows&logoColor=white)

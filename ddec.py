@@ -13,10 +13,11 @@
 # Carl Mercier (https://github.com/cmer)
 # Leif (https://github.com/akhepcat)
 # woodholly (https://github.com/woodholly)
+# Raphaël Droz (https://github.com/drzraf)
 #
-# Current Version: 0.2.25
+# Current Version: 0.2.26
 # Creation Date: 2019-07-05
-# Date of last changes: 2024-03-27
+# Date of last changes: 2024-04-14
 #
 # License:
 #  This program is free software; you can redistribute it and/or modify
@@ -30,6 +31,8 @@
 #  GNU General Public License for more details.
 
 from __future__ import unicode_literals
+
+import pprint
 from typing import List, Dict, Tuple, Optional, Any
 import os
 import sys
@@ -82,6 +85,14 @@ except ImportError:
                 or run 'pip install python-whois'"""
     )
 try:
+    import exrex
+except ImportError:
+    sys.exit(
+        """You need exrex!
+                install it from http://pypi.python.org/pypi/exrex
+                or run 'pip install exrex'"""
+    )
+try:
     from colorama import init
     from colorama import Fore, Back, Style
 except ImportError:
@@ -101,7 +112,7 @@ if sys.version_info < (3, 6):
     sys.exit(-1)
 
 # Global constants
-__version__: str = '0.2.25'
+__version__: str = '0.2.26'
 
 FR: str = Fore.RESET
 
@@ -175,7 +186,7 @@ TELEGRAM_TOKEN: str = '<INSERT YOUR TOKEN>'
 # channel id for telegram
 TELEGRAM_CHAT_ID: str = '<INSERT YOUR CHANNEL ID>'
 
-# # url for post request to api.telegram.org
+# url for post request to api.telegram.org
 TELEGRAM_URL: str = f'https://api.telegram.org/bot{TELEGRAM_TOKEN}/'
 
 if str(os.getenv('SMTP_CHECK_SSL_HOSTNAME')) == '0':
@@ -278,8 +289,8 @@ G_SOON_ADD: int = 21
 G_DOMAINS_LIST: List = []
 
 # Currency symbol
-G_CURRENCY_SYMBOL: str = '₽'
-# G_CURRENCY_SYMBOL: str = '¥'
+# G_CURRENCY_SYMBOL: str = '₽'
+G_CURRENCY_SYMBOL: str = '¥'
 # G_CURRENCY_SYMBOL: str = '£'
 # G_CURRENCY_SYMBOL: str = '€'
 # G_CURRENCY_SYMBOL: str = '$'
@@ -2625,16 +2636,84 @@ def prepare_domains_list(file: str) -> None:
                         continue
 
                     # the domain?
-                    word_list: List = ss.lower().split()
-                    if len(word_list) > 0:
+                    word_list: List[str] = ss.lower().split()
+
+                    if ss.lstrip().startswith('@regexp:'):
+                        # It's regex domain line
+                        tmp: str = ss.partition('@regexp:')[2].strip()
+                        word_list: List = tmp.split()
+                        if len(word_list) > 0:
+                            s_exrex: str = ''
+                            s_exrex_params: str = ''
+                            for i, item in enumerate(word_list):
+                                s_item = item.strip()
+                                if i == 0:
+                                    s_exrex = s_item
+                                else:
+                                    s_exrex_params += f'{s_item} '
+                            s_exrex_params = s_exrex_params.strip()
+                            tmp_domain_list: List[str] = []
+
+                            try:
+                                tmp_domain_list = list(exrex.generate(s_exrex))
+                            except Exception as e:
+                                print(f'{FRC}Error: {FLR}{str(e)}')
+
+                            if len(tmp_domain_list) > 0:
+                                word_list: List = s_exrex_params.split()
+                                for item in tmp_domain_list:
+                                    domain_name: str = item
+
+                                    if (":" in domain_name) or (domain_name.isdigit()):
+                                        # Broken line, this is not domain
+                                        continue
+
+                                    domain_dict['domain'] = domain_name
+                                    domain_dict['supported'] = is_domain_supported(
+                                        domain_name,
+                                        domain_group=current_group
+                                    )
+
+                                    if len(word_list) > 1:
+                                        # If the string contains the interval value in
+                                        # seconds and/or the expiration value in days
+                                        for i, item in enumerate(word_list):
+                                            if 'sleep:' in item:
+                                                # the interval value in seconds
+                                                interval_time: int = int(
+                                                    item.partition('sleep:')[2].strip())
+                                                domain_dict['interval_time'] = interval_time
+                                            elif 'cost:' in item:
+                                                # the cost of this domain
+                                                cost: float = float(
+                                                    item.partition('cost:')[2].strip())
+                                                domain_dict['cost'] = cost
+                                            elif 'skip_checking_whois_text_changes' in item:
+                                                # skip checking whois text changes for this domain
+                                                domain_dict['checking_whois_text_changes'] = False
+                                            else:
+                                                # the expiration value in days
+                                                domain_dict['expire_days'] = int(item)
+                                    else:
+                                        domain_dict['expire_days'] = CLI.expire_days
+
+                                    if domain_dict.copy() not in G_DOMAINS_LIST:
+                                        G_DOMAINS_TOTAL += 1
+                                        G_DOMAINS_LIST.append(domain_dict.copy())
+
+                    elif len(word_list) > 0:
+                        # It's normal domain line
                         domain_name: str = word_list[0].strip()
+
                         if (":" in domain_name) or (domain_name.isdigit()):
                             # Broken line, this is not domain
                             continue
 
                         domain_dict['domain'] = domain_name
-                        domain_dict['supported'] = is_domain_supported(domain_name, domain_group=current_group)
-                        G_DOMAINS_TOTAL += 1
+                        domain_dict['supported'] = is_domain_supported(
+                            domain_name,
+                            domain_group=current_group
+                        )
 
                         if len(word_list) > 1:
                             # If the string contains the interval value in
@@ -2663,7 +2742,9 @@ def prepare_domains_list(file: str) -> None:
                         else:
                             domain_dict['expire_days'] = CLI.expire_days
 
-                        G_DOMAINS_LIST.append(domain_dict.copy())
+                        if domain_dict.copy() not in G_DOMAINS_LIST:
+                            G_DOMAINS_TOTAL += 1
+                            G_DOMAINS_LIST.append(domain_dict.copy())
 
             except Exception as e:
                 err: str = (
@@ -2901,7 +2982,6 @@ def main() -> None:
             for item in G_DOMAINS_LIST:
                 expiration_days: int = CLI.expire_days
                 group: str = item['group']
-
                 domain: str = item['domain']
                 expire_days: int = item['expire_days']
                 interval_time: int = item['interval_time']

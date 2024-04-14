@@ -76,15 +76,10 @@
 #
 #----------------------------------------------------------------------------------------------------
 
-! Any domains
+! Regexp Group
+@regexp:youtube\.(com|org|net) cost:0 sleep:4 skip_checking_whois_text_changes
+@regexp:youtube[0-9]\.com cost:0 skip_checking_whois_text_changes sleep:4
+@regexp:youtube([0-9]|1[0-5])\.com cost:0 skip_checking_whois_text_changes sleep:4
 
-artsoptilab.cn
-2020iwear.com.ph
-2020iwear.de
-2020iwear.ph
-aolab.cn
-aolab.com.cn
-artsoptilab.cn
 
-! Unsupported domains
-whitehouse.gov
+

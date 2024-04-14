@@ -80,6 +80,7 @@ or
 $ pip install -U python-whois
 $ pip install -U python-dateutil
 $ pip install -U colorama
+$ pip install -U exrex
 ```
 and
 ```console
@@ -173,9 +174,17 @@ Path to the file with the list of domains (default is None)
     domain [sleep:%seconds%]
     domain [cost:%cost%]
     domain
+    @regexp:regular_expression [%days%] [sleep:%seconds%] [cost:%cost%] [skip_checking_whois_text_changes]
+    @regexp:regular_expression [sleep:%seconds%] [cost:%cost%]
+    @regexp:regular_expression [%days%]
+    @regexp:regular_expression
 ```
 
 **domain** - Domain name
+
+**@regexp:** - keyword to start describing a list of domains using a regular expression (don't change it!)
+
+**regular_expression** - regular expression describing the rules for generating a list of domains (duplicate domain names will be excluded)
 
 **%days%** - An integer indicating how many days before the expiration of the domain registration to raise an alarm.
 
@@ -216,6 +225,9 @@ The file must be encoded in **UTF-8 without BOM**, the format of the new line: *
 # domain_name sleep:integer integer
 # domain_name sleep:integer
 #
+# ! Regexp Group 3
+# @regexp:regular_expression cost:0 sleep:4 skip_checking_whois_text_changes
+#
 # If the expiration value in days is not specified,
 # the default value is used or from the command line parameter
 #
@@ -254,6 +266,11 @@ twitter.com
 ! Youtube
 youtube.tv
 youtube.com
+
+! Regexp Group (domain names are generated using regular expressions, duplicates are automatically ignored)
+@regexp:youtube\.(com|org|net) cost:0 sleep:4 skip_checking_whois_text_changes
+@regexp:youtube[0-9]\.com cost:0 skip_checking_whois_text_changes sleep:4
+@regexp:youtube([0-9]|1[0-5])\.com cost:0 skip_checking_whois_text_changes sleep:4
 ```
 
 **-d STRING, --domain STRING**
@@ -644,6 +661,7 @@ Special thanks for various suggestions and comments:
 - [Carl Mercier](https://github.com/cmer)
 - [Leif](https://github.com/akhepcat)
 - [woodholly](https://github.com/woodholly)
+- [Raphaël Droz](https://github.com/drzraf)
 
 ## License
 [GNU General Public License v3.0](https://choosealicense.com/licenses/gpl-3.0/)
@@ -656,7 +674,7 @@ I, the author of this python script, wrote this script exclusively for my needs.
 You can make any changes to the script code and fork this script, provided that the link to me and [Matty](https://github.com/Matty9191) is indicated as a source of your inspiration.
 
 ## Postscriptum
-- The script was tested in Microsoft Windows 10/11, Linux Fedora 36/37, Linux Debian 9/10/11/12, Linux Ubuntu Desktop 18.04/20.04/20.10/22.04.2/23.04, CentOS Linux 7.9/8.5, Rocky Linux 8.8/9.2, Linux Manjaro 22.1.3, Apple macOS 13.4.1 Ventura on MacBook Pro M1.
+- The script was tested in Microsoft Windows 10/11, Linux Fedora 36/38/39, Linux Debian 9/10/11/12, Linux Ubuntu Desktop 18.04/20.04/20.10/22.04.3/23.04, CentOS Linux 7.9/8.5, CentOS Stream 8/9, Rocky Linux 8.9/9.3, Linux Manjaro 23.1.4, Apple macOS 13.6.6 Ventura/Apple macOS 14.4.1 Sonoma on MacBook Pro M1.
 
 
 
