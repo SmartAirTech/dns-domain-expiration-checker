@@ -661,7 +661,7 @@ Special thanks for various suggestions and comments:
 - [Carl Mercier](https://github.com/cmer)
 - [Leif](https://github.com/akhepcat)
 - [woodholly](https://github.com/woodholly)
-- [Raphaël Droz](https://github.com/drzraf)
+- [drzraf](https://github.com/drzraf)
 
 ## License
 [GNU General Public License v3.0](https://choosealicense.com/licenses/gpl-3.0/)

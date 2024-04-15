@@ -13,11 +13,11 @@
 # Carl Mercier (https://github.com/cmer)
 # Leif (https://github.com/akhepcat)
 # woodholly (https://github.com/woodholly)
-# Raphaël Droz (https://github.com/drzraf)
+# drzraf (https://github.com/drzraf)
 #
-# Current Version: 0.2.26
+# Current Version: 0.2.26.1
 # Creation Date: 2019-07-05
-# Date of last changes: 2024-04-14
+# Date of last changes: 2024-04-15
 #
 # License:
 #  This program is free software; you can redistribute it and/or modify
@@ -112,7 +112,7 @@ if sys.version_info < (3, 6):
     sys.exit(-1)
 
 # Global constants
-__version__: str = '0.2.26'
+__version__: str = '0.2.26.1'
 
 FR: str = Fore.RESET
 

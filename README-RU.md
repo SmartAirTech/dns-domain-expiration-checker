@@ -675,7 +675,7 @@ $ crontab -u user -r
 - [Carl Mercier](https://github.com/cmer)
 - [Leif](https://github.com/akhepcat)
 - [woodholly](https://github.com/woodholly)
-- [Raphaël Droz](https://github.com/drzraf)
+- [drzraf](https://github.com/drzraf)
 
 
 ## Лицензия
