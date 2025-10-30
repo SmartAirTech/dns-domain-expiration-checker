@@ -33,18 +33,18 @@ jobs:
 
       - name: Send email notification via AWS SES
         if: steps.domain-check.outputs.report_generated == 'true'
-        uses: dawidd6/action-send-mail@v3
-        with:
-          server_address: ${{ secrets.AWS_SES_SMTP_ENDPOINT }}
-          server_port: 587
-          username: ${{ secrets.AWS_SES_SMTP_USERNAME }}
-          password: ${{ secrets.AWS_SES_SMTP_PASSWORD }}
-          subject: Smart Air - Weekly Domain Expiration Report
-          from: no-reply-github@smartairfilters.com
-          to: tech@smartairfilters.com
-          body: |
+        env:
+          SMTP_SERVER: ${{ secrets.AWS_SES_SMTP_ENDPOINT }}
+          SMTP_PORT: 587
+          SMTP_USERNAME: ${{ secrets.AWS_SES_SMTP_USERNAME }}
+          SMTP_PASSWORD: ${{ secrets.AWS_SES_SMTP_PASSWORD }}
+          EMAIL_FROM: no-reply-github@smartairfilters.com
+          EMAIL_TO: tech@smartairfilters.com
+          EMAIL_SUBJECT: Smart Air - Weekly Domain Expiration Report
+          EMAIL_BODY: |
             Weekly domain expiration check completed.
 
             See attached report for details.
-          attachments: domain_report.txt
-          priority: normal
+          ATTACHMENT_PATH: domain_report.txt
+        run: |
+          python send_email.py
