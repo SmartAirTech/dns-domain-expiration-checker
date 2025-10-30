@@ -31,14 +31,14 @@ jobs:
           python ddec.py -nb -c -i 1 -f smartair.txt > domain_report.txt 2>&1 || true
           echo "report_generated=true" >> $GITHUB_OUTPUT
 
-      - name: Send email notification
+      - name: Send email notification via AWS SES
         if: steps.domain-check.outputs.report_generated == 'true'
         uses: dawidd6/action-send-mail@v3
         with:
-          server_address: ${{ secrets.SMTP_SERVER }}
-          server_port: ${{ secrets.SMTP_PORT }}
-          username: ${{ secrets.SMTP_USERNAME }}
-          password: ${{ secrets.SMTP_PASSWORD }}
+          server_address: ${{ secrets.AWS_SES_SMTP_ENDPOINT }}
+          server_port: 587
+          username: ${{ secrets.AWS_SES_SMTP_USERNAME }}
+          password: ${{ secrets.AWS_SES_SMTP_PASSWORD }}
           subject: Smart Air - Weekly Domain Expiration Report
           to: ${{ secrets.EMAIL_TO }}
           from: ${{ secrets.EMAIL_FROM }}
