@@ -40,8 +40,8 @@ jobs:
           username: ${{ secrets.AWS_SES_SMTP_USERNAME }}
           password: ${{ secrets.AWS_SES_SMTP_PASSWORD }}
           subject: Smart Air - Weekly Domain Expiration Report
-          to: ${{ secrets.EMAIL_TO }}
-          from: ${{ secrets.EMAIL_FROM }}
+          from: no-reply-github@smartairfilters.com
+          to: tech@smartairfilters.com
           body: |
             Weekly domain expiration check completed.
 
