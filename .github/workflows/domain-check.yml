@@ -22,9 +22,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install python-whois
-          pip install python-dateutil
-          pip install requests[socks]
+          pip install -r requirements.txt
 
       - name: Run domain expiration check
         id: domain-check
