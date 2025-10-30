@@ -38,11 +38,12 @@ jobs:
           SMTP_USERNAME: ${{ secrets.AWS_SES_SMTP_USERNAME }}
           SMTP_PASSWORD: ${{ secrets.AWS_SES_SMTP_PASSWORD }}
           EMAIL_FROM: no-reply-github@smartairfilters.com
-          EMAIL_TO: kim.shitong@smartairfilters.com
+          EMAIL_TO: tech@smartairfilters.com
           EMAIL_SUBJECT: Smart Air - Weekly Domain Expiration Report
           EMAIL_BODY: |
             Weekly domain expiration check completed.
-
+            Refer : https://box.smartairfilters.com/apps/collectives/Tech/Domains?fileId=1844823
+              to retrieve what's the link of domain provider?
             See attached report for details.
           ATTACHMENT_PATH: domain_report.txt
         run: |
