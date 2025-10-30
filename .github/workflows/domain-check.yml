@@ -2,8 +2,8 @@ name: Domain Expiration Check
 
 on:
   schedule:
-    # Runs daily at 1:00 AM UTC (9:00 PM Singapore Time)
-    - cron: '0 1 * * *'
+    # Runs weekly every Monday at 1:00 AM UTC (9:00 AM Singapore Time)
+    - cron: '0 1 * * 1'
   workflow_dispatch: # Allows manual trigger from GitHub UI
 
 jobs:
@@ -39,11 +39,11 @@ jobs:
           server_port: ${{ secrets.SMTP_PORT }}
           username: ${{ secrets.SMTP_USERNAME }}
           password: ${{ secrets.SMTP_PASSWORD }}
-          subject: Smart Air - Daily Domain Expiration Report
+          subject: Smart Air - Weekly Domain Expiration Report
           to: ${{ secrets.EMAIL_TO }}
           from: ${{ secrets.EMAIL_FROM }}
           body: |
-            Daily domain expiration check completed.
+            Weekly domain expiration check completed.
 
             See attached report for details.
           attachments: domain_report.txt

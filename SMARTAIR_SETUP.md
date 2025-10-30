@@ -1,12 +1,12 @@
 # Smart Air Domain Monitoring Setup
 
-## Automated Daily Email Notifications
+## Automated Weekly Email Notifications
 
-This repository is configured to automatically check domain expiration dates daily and send email reports.
+This repository is configured to automatically check domain expiration dates weekly and send email reports.
 
 ### GitHub Actions Workflow
 
-The workflow runs daily at 9:00 AM UTC (5:00 PM Singapore Time) and checks all domains in `smartair.txt`.
+The workflow runs weekly every Monday at 1:00 AM UTC (9:00 AM Singapore Time) and checks all domains in `smartair.txt`.
 
 ### Required GitHub Secrets
 
