@@ -1,0 +1,50 @@
+name: Domain Expiration Check
+
+on:
+  schedule:
+    # Runs weekly every Monday at 1:00 AM UTC (9:00 AM Singapore Time)
+    - cron: '0 1 * * 1'
+  workflow_dispatch: # Allows manual trigger from GitHub UI
+
+jobs:
+  check-domains:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install python-whois
+          pip install python-dateutil
+
+      - name: Run domain expiration check
+        id: domain-check
+        run: |
+          python ddec.py -nb -c -i 1 -f smartair.txt > domain_report.txt 2>&1 || true
+          echo "report_generated=true" >> $GITHUB_OUTPUT
+
+      - name: Send email notification via AWS SES
+        if: steps.domain-check.outputs.report_generated == 'true'
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: ${{ secrets.AWS_SES_SMTP_ENDPOINT }}
+          server_port: 587
+          username: ${{ secrets.AWS_SES_SMTP_USERNAME }}
+          password: ${{ secrets.AWS_SES_SMTP_PASSWORD }}
+          subject: Smart Air - Weekly Domain Expiration Report
+          to: ${{ secrets.EMAIL_TO }}
+          from: ${{ secrets.EMAIL_FROM }}
+          body: |
+            Weekly domain expiration check completed.
+
+            See attached report for details.
+          attachments: domain_report.txt
+          priority: normal
